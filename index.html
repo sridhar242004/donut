@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donut Delights - Innovative Gourmet Donuts</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #FF6B6B;
+            --secondary-color: #4ECDC4;
+            --accent-color: #FFA500;
+            --text-color: #333;
+            --background-color: #F7F7F7;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .navbar-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .navbar-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .navbar-links a:hover {
+            color: var(--accent-color);
+        }
+
+        .cart-icon {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background-color: var(--accent-color);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.8rem;
+        }
+
+        .hero {
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+            padding-top: 80px; /* Added to account for fixed navbar */
+        }
+
+        #hero-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+       
+        .hero-content {
+            text-align: center;
+          
+            z-index: 1;
+            color: var(--primary-color);
+        }
+
+        .hero h1 {
+            font-size: 5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            color: var(--primary-color);
+        }
+
+        .hero p {
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            color: var(--primary-color);
+        }
+
+        .cta-button {
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .cta-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(255, 165, 0, 0.6);
+        }
+
+        .menu {
+            padding: 6rem 2rem;
+            background-color: white;
+        }
+
+        .menu h2 {
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 3rem;
+            color: var(--primary-color);
+        }
+
+        .donut-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+        }
+
+        .donut-item {
+            background-color: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .donut-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .donut-image {
+            width: 100%;
+            height: 250px;
+            background-color: #f0f0f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .donut-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .donut-item:hover .donut-image img {
+            transform: scale(1.1);
+        }
+
+        .donut-info {
+            padding: 1.5rem;
+        }
+
+        .donut-info h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        .donut-description {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .donut-price {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: var(--accent-color);
+        }
+
+        .add-to-cart {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .add-to-cart:hover {
+            background-color: var(--primary-color);
+        }
+
+        #cart {
+            position: fixed;
+            top: 80px;
+            right: -300px;
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            width: 300px;
+            transition: all 0.3s ease;
+        }
+
+        #cart.open {
+            right: 20px;
+        }
+
+        #cart h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        #cart-items {
+            margin-bottom: 1rem;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        #cart-total {
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--accent-color);
+        }
+
+        .checkout-button {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .checkout-button:hover {
+            background-color: var(--accent-color);
+        }
+
+        #donut-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .innovation-section {
+            padding: 6rem 2rem;
+            background-color: #f0f0f0;
+            text-align: center;
+        }
+
+        .innovation-section h2 {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 2rem;
+        }
+
+        .innovation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .innovation-item {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .innovation-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .innovation-icon {
+            font-size: 3rem;
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+        }
+
+        .innovation-item h3 {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .innovation-item p {
+            font-size: 1rem;
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 3rem;
+            }
+
+            .hero p {
+                font-size: 1.2rem;
+            }
+
+            .menu {
+                padding: 4rem 1rem;
+            }
+
+            .donut-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            }
+
+            .navbar {
+                flex-direction: column;
+                padding: 1rem;
+            }
+
+            .navbar-links {
+                margin-top: 1rem;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="#" class="navbar-logo">Donut Delights</a>
+        <div class="navbar-links">
+           <a href="ourstory.html">ourstory</a>
+            <a href="gallary.html">Gallery</a>
+            <a href="event.html">Events</a>
+            <a href="donutbuilder.html">donutbuilder</a>
+            <a href="product.html">Top 3 Product</a>
+            <a href="#menu">Menu</a>
+            <a href="#innovation">Innovations</a>
+            <div class="cart-icon" id="cart-icon">
+                🛒
+                <span class="cart-count" id="cart-count">0</span>
+            </div>
+        </div>
+    </nav>
+
+    <canvas id="donut-canvas"></canvas>
+
+    <section class="hero">
+        <video id="hero-video" autoplay loop muted>
+            <source src="19999346-hd_1920_1080_30fps.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="hero-overlay">
+            <div class="hero-content">
+                <h1>Donut Delights</h1>
+                <p>Experience gourmet innovation in every bite</p>
+                <button class="cta-button" id="explore-menu">Explore Our Menu</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="menu" id="menu">
+        <h2>Our Innovative Creations</h2>
+        <div class="donut-grid">
+            <!-- Donut items will be dynamically added here -->
+        </div>
+    </section>
+
+    <section class="innovation-section" id="innovation">
+        <h2>Our Donut Innovations</h2>
+        <div class="innovation-grid">
+            <div class="innovation-item">
+                <div class="innovation-icon">🌿</div>
+                <h3>Plant-Based Delights</h3>
+                <p>Experience our range of vegan donuts made with innovative plant-based ingredients.</p>
+            </div>
+            <div class="innovation-item">
+                <div class="innovation-icon">🧬</div>
+                <h3>Molecular Gastronomy</h3>
+                <p>Discover unique flavors and textures created through cutting-edge culinary techniques.</p>
+            </div>
+            <div class="innovation-item">
+                <div class="innovation-icon">🌡️</div>
+                <h3>Temperature Play</h3>
+                <p>Indulge in our hot-and-cold donut creations that challenge your taste buds.</p>
+            </div>
+            <div class="innovation-item">
+                <div class="innovation-icon">🎨</div>
+                <h3>Artistic Designs</h3>
+                <p>Feast your eyes on our visually stunning donuts that are true edible art pieces.</p>
+            </div>
+        </div>
+    </section>
+
+    <div id="cart">
+        <h3>Your Cart</h3>
+        <div id="cart-items"></div>
+        <div id="cart-total">Total: $0.00</div>
+        <button class="checkout-button">Checkout</button>
+    </div>
+
+    <script>
+        // Sample donut data
+        const donuts = [
+            { name: 'Galaxy Glaze', price: 3.99, image: 'pexels-mccutcheon-1191639.jpg', description: 'A cosmic blend of flavors with edible glitter' },
+            { name: 'Matcha Madness', price: 4.49, image: 'pexels-ds-stories-9228611.jpg', description: 'Green tea infused dough with a creamy matcha filling' },
+            { name: 'Bacon Maple Bliss', price: 4.99, image: 'pexels-punttim-867452.jpg', description: 'Sweet maple glaze topped with crispy bacon bits' },
+            { name: 'Lava Cake Donut', price: 5.49, image: 'pexels-jeshoots-com-147458-442599.jpg', description: 'Chocolate donut with a molten center that oozes when bitten' },
+            { name: 'Unicorn Dream', price: 4.79, image: 'pexels-n-voitkevich-6942003.jpg', description: 'Pastel-colored donut with magical flavors and sprinkles' },
+            { name: 'Spicy Mango Tango', price: 4.29, image: 'pexels-tima-miroshnichenko-7033650.jpg', description: 'Sweet mango glaze with a kick of chili spice' },
+        ];
+
+        // Populate donut grid
+        const donutGrid = document.querySelector('.donut-grid');
+        donuts.forEach(donut => {
+            const donutItem = document.createElement('div');
+            donutItem.classList.add('donut-item');
+            donutItem.innerHTML = `
+                <div class="donut-image">
+                    <img src="${donut.image}" alt="${donut.name}">
+                </div>
+                <div class="donut-info">
+                    <h3>${donut.name}</h3>
+                    <p class="donut-description">${donut.description}</p>
+                    <p class="donut-price">$${donut.price.toFixed(2)}</p>
+                    <button class="add-to-cart" data-name="${donut.name}" data-price="${donut.price}">Add to Cart</button>
+                </div>
+            `;
+            donutGrid.appendChild(donutItem);
+        });
+
+        // Shopping cart functionality
+        const cart = {};
+        const cartItems = document.getElementById('cart-items');
+        const cartTotal = document.getElementById('cart-total');
+        const cartElement = document.getElementById('cart');
+        const cartIcon = document.getElementById('cart-icon');
+        const cartCount = document.getElementById('cart-count');
+
+        document.querySelectorAll('.add-to-cart').forEach(button => {
+            button.addEventListener('click', () => {
+                const name = button.dataset.name;
+                const price = parseFloat(button.dataset.price);
+                
+                if (cart[name]) {
+                    cart[name].quantity++;
+                } else {
+                    cart[name] = { price, quantity: 1 };
+                }
+
+                updateCart();
+                animateCartHighlight();
+            });
+        });
+
+        function updateCart() {
+            cartItems.innerHTML = '';
+            let total = 0;
+            let count = 0;
+
+            for (const [name, item] of Object.entries(cart)) {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                count += item.quantity;
+                const cartItemElement = document.createElement('div');
+                cartItemElement.classList.add('cart-item');
+                cartItemElement.innerHTML = `
+                    <span>${name} x${item.quantity}</span>
+                    <span>$${itemTotal.toFixed(2)}</span>
+                `;
+                cartItems.appendChild(cartItemElement);
+            }
+
+            cartTotal.textContent = `Total: $${total.toFixed(2)}`;
+            cartCount.textContent = count;
+        }
+
+        function animateCartHighlight() {
+            cartIcon.classList.add('highlight');
+            setTimeout(() => {
+                cartIcon.classList.remove('highlight');
+            }, 300);
+        }
+
+        // Toggle cart visibility
+        cartIcon.addEventListener('click', () => {
+            cartElement.classList.toggle('open');
+        });
+
+        // Checkout button functionality (placeholder)
+        document.querySelector('.checkout-button').addEventListener('click', () => {
+            if (Object.keys(cart).length === 0) {
+                alert('Your cart is empty. Add some delicious donuts first!');
+            } else {
+                alert('Thank you for your order! This is where the checkout process would begin.');
+                // Here you would typically integrate with a payment gateway and order processing system
+            }
+        });
+
+        // Smooth scroll to menu section
+        document.getElementById('explore-menu').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('menu').scrollIntoView({ behavior: 'smooth' });
+        });
+
+       
+
+        // Resize canvas when window is resized
+        window.addEventListener('resize', () => {
+            const newWidth = window.innerWidth;
+            const newHeight = window.innerHeight;
+            camera.aspect = newWidth / newHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(newWidth, newHeight);
+        });
+
+        // Parallax effect for hero section
+        const heroContent = document.querySelector('.hero-content');
+        document.addEventListener('mousemove', (e) => {
+            const mouseX = e.clientX / window.innerWidth - 0.5;
+            const mouseY = e.clientY / window.innerHeight - 0.5;
+            gsap.to(heroContent, {
+                duration: 0.5,
+                x: mouseX * 50,
+                y: mouseY * 50,
+                ease: 'power2.out'
+            });
+        });
+
+        // Animate donut items on scroll
+        const donutItems = document.querySelectorAll('.donut-item');
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: "0px 0px -100px 0px"
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    gsap.to(entry.target, {
+                        duration: 0.5,
+                        opacity: 1,
+                        y: 0,
+                        ease: 'power2.out'
+                    });
+                }
+            });
+        }, observerOptions);
+
+        donutItems.forEach(item => {
+            gsap.set(item, { opacity: 0, y: 50 });
+            observer.observe(item);
+        });
+    </script>
+</body>
+</html>
