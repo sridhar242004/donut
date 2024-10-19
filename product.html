@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gourmet Donut Showcase - Donut Delights</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #FF6B6B;
+            --secondary-color: #4ECDC4;
+            --accent-color: #FFA500;
+            --text-color: #333;
+            --background-color: #F7F7F7;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+
+        .showcase-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        .product-list {
+            width: 30%;
+            background-color: white;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .product-item {
+            cursor: pointer;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .product-item:hover {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .product-item h3 {
+            margin-bottom: 0.5rem;
+        }
+
+        .product-display {
+            width: 70%;
+            position: relative;
+        }
+
+        #product-canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        .product-info {
+            position: absolute;
+            bottom: 2rem;
+            left: 2rem;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 1rem;
+            border-radius: 8px;
+            max-width: 400px;
+        }
+
+        .product-info h2 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .product-info p {
+            margin-bottom: 1rem;
+        }
+
+        .customize-options {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .customize-option {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .add-to-cart {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .add-to-cart:hover {
+            background-color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="showcase-container">
+        <div class="product-list">
+            <div class="product-item" data-product="galaxy-glaze">
+                <h3>Galaxy Glaze</h3>
+                <p>A cosmic blend of flavors with edible glitter</p>
+            </div>
+            <div class="product-item" data-product="matcha-madness">
+                <h3>Matcha Madness</h3>
+                <p>Green tea infused dough with a creamy matcha filling</p>
+            </div>
+            <div class="product-item" data-product="bacon-maple-bliss">
+                <h3>Bacon Maple Bliss</h3>
+                <p>Sweet maple glaze topped with crispy bacon bits</p>
+            </div>
+            <!-- Add more product items here -->
+        </div>
+        <div class="product-display">
+            <canvas id="product-canvas"></canvas>
+            <div class="product-info">
+                <h2 id="product-name">Select a Donut</h2>
+                <p id="product-description">Click on a donut from the list to view details and customize</p>
+                <div class="customize-options">
+                    <div class="customize-option" style="background-color: #FF6B6B;"></div>
+                    <div class="customize-option" style="background-color: #4ECDC4;"></div>
+                    <div class="customize-option" style="background-color: #FFA500;"></div>
+                </div>
+                <button class="add-to-cart">Add to Cart</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Three.js setup
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth * 0.7 / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('product-canvas'), alpha: true });
+        renderer.setSize(window.innerWidth * 0.7, window.innerHeight);
+
+        const geometry = new THREE.TorusGeometry(1, 0.4, 16, 100);
+        const material = new THREE.MeshPhongMaterial({ color: 0xffad60 });
+        const donut = new THREE.Mesh(geometry, material);
+        scene.add(donut);
+
+        const light = new THREE.PointLight(0xffffff, 1, 100);
+        light.position.set(0, 0, 10);
+        scene.add(light);
+
+        camera.position.z = 5;
+
+        function animate() {
+            requestAnimationFrame(animate);
+            donut.rotation.x += 0.01;
+            donut.rotation.y += 0.01;
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // Product interaction
+        // Product interaction
+        const productItems = document.querySelectorAll('.product-item');
+        const productName = document.getElementById('product-name');
+        const productDescription = document.getElementById('product-description');
+        const customizeOptions = document.querySelectorAll('.customize-option');
+        const addToCartButton = document.querySelector('.add-to-cart');
+
+        const products = {
+            'galaxy-glaze': {
+                name: 'Galaxy Glaze',
+                description: 'A cosmic blend of flavors with edible glitter',
+                color: 0x8A2BE2
+            },
+            'matcha-madness': {
+                name: 'Matcha Madness',
+                description: 'Green tea infused dough with a creamy matcha filling',
+                color: 0x90EE90
+            },
+            'bacon-maple-bliss': {
+                name: 'Bacon Maple Bliss',
+                description: 'Sweet maple glaze topped with crispy bacon bits',
+                color: 0xCD853F
+            }
+        };
+
+        productItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const productId = item.dataset.product;
+                const product = products[productId];
+                
+                // Update product info
+                productName.textContent = product.name;
+                productDescription.textContent = product.description;
+
+                // Update 3D model
+                gsap.to(donut.material.color, {
+                    r: (product.color >> 16) / 255,
+                    g: ((product.color >> 8) & 255) / 255,
+                    b: (product.color & 255) / 255,
+                    duration: 0.5
+                });
+
+                // Animate donut
+                gsap.to(donut.rotation, {
+                    y: donut.rotation.y + Math.PI * 2,
+                    duration: 1,
+                    ease: "power2.inOut"
+                });
+            });
+        });
+
+        customizeOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                const color = option.style.backgroundColor;
+                gsap.to(donut.material.color, {
+                    r: parseInt(color.slice(4, color.indexOf(','))) / 255,
+                    g: parseInt(color.slice(color.indexOf(',') + 1, color.lastIndexOf(','))) / 255,
+                    b: parseInt(color.slice(color.lastIndexOf(',') + 1, -1)) / 255,
+                    duration: 0.5
+                });
+            });
+        });
+
+        addToCartButton.addEventListener('click', () => {
+            // Here you would typically add the product to the cart
+            // For this example, we'll just show an alert
+            alert(`${productName.textContent} added to cart!`);
+        });
+
+        // Responsive design
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth * 0.7 / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth * 0.7, window.innerHeight);
+        });
+
+        // Initial animation
+        gsap.from(donut.scale, {
+            x: 0,
+            y: 0,
+            z: 0,
+            duration: 1,
+            ease: "elastic.out(1, 0.5)",
+            onComplete: () => {
+                gsap.to(donut.rotation, {
+                    y: Math.PI * 2,
+                    duration: 20,
+                    repeat: -1,
+                    ease: "none"
+                });
+            }
+        });
+    </script>
+</body>
+</html>
